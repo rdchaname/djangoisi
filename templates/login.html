@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión</title>
+</head>
+
+<body>
+    {# aqui va el titulo #}
+    <h1>{{ nombreProyecto }}</h1>
+    <form>
+        <h4>{{ tituloFormulario }}</h4>
+        <label for="">Usuario</label>
+        <input type="text">
+        <br>
+        <label for="">Contraseña</label>
+        <input type="text">
+        <br>
+        <button>Ingresar</button>
+        <strong>Hola {{ saludo }}</strong>
+    </form>
+    <br>
+    {# este es un comentario de django #}
+    <!-- este es un comentario html -->
+    <ul>
+        {% for enlace in enlaces %}
+            <li>{{ enlace }}</li>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>
