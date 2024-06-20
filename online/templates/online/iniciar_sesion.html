@@ -24,31 +24,21 @@ Iniciar sesión || {{ titulo_principal }}
         <div class="row">
             <div class="col-sm-12 col-md-12 col-xs-12 col-lg-12">
                 <!-- Login Form s-->
-                <form action="#">
+                <form id="formulario-ingresar">
+                    {% csrf_token %}
                     <div class="login-form">
-                        <h4 class="login-title">Login</h4>
+                        <h4 class="login-title">Iniciar sesión</h4>
                         <div class="row">
                             <div class="col-md-12 col-12">
-                                <label>Email Address*</label>
-                                <input type="email" placeholder="Email Address">
+                                <label>Correo electrónico*</label>
+                                <input class="form-control" type="email" name="email" id="email" placeholder="Correo electrónico">
                             </div>
                             <div class="col-12 mb--20">
-                                <label>Password</label>
-                                <input type="password" placeholder="Password">
-                            </div>
-                            <div class="col-md-8">
-                                <div class="check-box">
-                                    <input type="checkbox" id="remember_me">
-                                    <label for="remember_me">Remember me</label>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="forgotton-password_info">
-                                    <a href="#"> Forgotten pasward?</a>
-                                </div>
+                                <label>Contraseña</label>
+                                <input class="form-control" type="password" placeholder="Contraseña" id="password" name="password">
                             </div>
                             <div class="col-md-12">
-                                <button class="kenne-login_btn">Login</button>
+                                <button type="submit" class="kenne-login_btn">Iniciar sesión</button>
                             </div>
                         </div>
                     </div>
@@ -58,4 +48,42 @@ Iniciar sesión || {{ titulo_principal }}
     </div>
 </div>
 <!-- Kenne's Login Register Area  End Here -->
+{% endblock %}
+
+{% block javascript %}
+<script>
+    // para prevenir el evento SUBMIT del formulario
+    document.getElementById("formulario-ingresar").addEventListener("submit", function(evento){
+        evento.preventDefault(); // ya el formulario no debería estar refreshcandose
+        login();
+    });
+
+    function login() {
+        // axios
+        const url = '{% url 'ingresar' %}'
+        const formulario = document.getElementById("formulario-ingresar");
+        const data = new FormData(formulario);
+        // data.append("email", 'texto')
+        // data.append("password", 'adasdasda')
+        axios.post(url, data)
+            .then(function(respuesta){
+                const url = respuesta.data.url
+                const mensaje = respuesta.data.mensaje
+                toastr.success(mensaje)
+                setTimeout(function(){
+                    window.location.replace(url)
+                }, 2000)
+            })
+            .catch(function(error){
+                if(error.response){
+                    if(error.response.status === 422){
+                        const mensaje = error.response.data.mensaje
+                        toastr.error(mensaje)
+                        const errores = error.response.data.errores
+                        mostrarErrores("formulario-ingresar", errores)
+                    }
+                }
+            });
+    }
+</script>
 {% endblock %}

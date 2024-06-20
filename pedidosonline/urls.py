@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from online.views import portada, detalle_producto, registrarse, iniciar_sesion, registro
+from online.views import portada, detalle_producto, registrarse, iniciar_sesion, registro, ingresar, cerrar_sesion, mi_cuenta
 
 admin.site.site_header = 'Sistema de Pedidos en línea'
 admin.site.site_title = 'Sistema de Pedidos en línea'
@@ -31,7 +31,10 @@ urlpatterns = [
     path('detalle_producto/<slug:slug_producto>', detalle_producto, name='detalle_producto'),
     path('registrarse', registrarse, name="registrarse"),
     path('iniciar_sesion', iniciar_sesion, name="iniciar_sesion"),
-    path('registro', registro, name='registro')
+    path('registro', registro, name='registro'),
+    path('ingresar', ingresar, name='ingresar'),
+    path('cerrar_sesion', cerrar_sesion, name='cerrar_sesion'),
+    path('mi_cuenta', mi_cuenta, name='mi_cuenta'),
 ]
 
 if settings.DEBUG is True:

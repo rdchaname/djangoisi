@@ -1,9 +1,11 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-from online.forms import RegistrarseForm
+from online.forms import RegistrarseForm, IniciarSesionForm
 from django.contrib.auth.models import User
 from pedidos.models import Cliente
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
 
 def portada(request):
     return render(request, "online/portada.html")
@@ -54,8 +56,63 @@ def registro(request):
             url = reverse('iniciar_sesion')
             return HttpResponseRedirect(url)
         else:
-            url = reverse("registrarse")
-            return HttpResponseRedirect(url)
+            return render(request, "online/registrarse.html", {"formulario": formulario})
+            # url = reverse("registrarse")
+            # return HttpResponseRedirect(url)
     else:
         url = reverse("registrarse")
         return HttpResponseRedirect(url)
+    
+    
+    
+def ingresar(request):
+    if request.method == 'POST':
+        formulario = IniciarSesionForm(request.POST)
+        if formulario.is_valid():
+            email = formulario.cleaned_data["email"]
+            password = formulario.cleaned_data["password"]
+            usuario_logeado = authenticate(username=email, password=password)
+            login(request, usuario_logeado) # esta linea inicia sesión            
+            
+            url = reverse("mi_cuenta")
+            data = {
+                "url" : url,
+                "mensaje": "Inicio de sesión correcto"
+            }
+            return JsonResponse(data, status=200)
+        else:
+            data = {}
+            lista_errores = {}
+            print(formulario.errors.items())
+            for campo, errores in formulario.errors.items():
+                print(campo)
+                campo_errores = []
+                for error in errores:
+                    campo_errores.append(error)
+                    
+                lista_errores[campo] = campo_errores
+            
+            data["errores"] = lista_errores
+            data["mensaje"] = "Eror en los datos enviados"
+            
+            print(data)
+            
+            # entidad improcesable 422
+            return JsonResponse(data, status=422)
+    else:
+        url = reverse("iniciar_sesion")
+        return HttpResponseRedirect(url)
+    
+    
+def cerrar_sesion(request):
+    logout(request)
+    url = reverse("iniciar_sesion")
+    return HttpResponseRedirect(url)
+
+
+@login_required(login_url="/iniciar_sesion")
+def mi_cuenta(request):
+    return render(request, "online/mi_cuenta.html")
+
+
+# confirmar_pedido
