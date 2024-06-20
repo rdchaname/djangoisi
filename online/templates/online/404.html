@@ -1,0 +1,37 @@
+{% extends 'online/layouts/base.html' %}
+
+{% block titulo %}
+Página no encontrada || {{ titulo_principal }}
+{% endblock %}
+
+{% block contenido%}
+<!-- Begin Kenne's Breadcrumb Area -->
+<div class="breadcrumb-area">
+    <div class="container">
+        <div class="breadcrumb-content">
+            <h2>Página no encontrada</h2>
+            <ul>
+                <li><a href="{% url 'portada' %}">Inicio</a></li>
+                <li class="active">Error 404</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Kenne's Breadcrumb Area End Here -->
+<!-- Error Wrapper Start -->
+<div class="error-content_wrapper">
+    <div class="error-area">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-7 col-lg-8 text-center">
+                    <div class="error">
+                        <h1>404</h1>
+                        <h2>OPPS! Página no encontrada</h2>
+                        <a href="{% url 'portada' %}" class="btn">Retornar al inicio</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

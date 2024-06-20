@@ -6,14 +6,29 @@ from django.contrib.auth.models import User
 from pedidos.models import Cliente
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
+from productos.models import Producto,ImagenProducto
+from django.core.exceptions import ObjectDoesNotExist
 
 def portada(request):
-    return render(request, "online/portada.html")
+    # consulta la lista de productos
+    # MODELO
+    # select id, titulo, precio from productos where activo = 1 and precio NOT IN (0.00) order by titulo DESC, precio ASC
+    productos = Producto.objects.filter(activo=True) \
+                        .exclude(precio=0.00) \
+                        .order_by('-titulo', 'precio') 
+    # print(productos)
+    return render(request, "online/portada.html", {"productos": productos})
 
 
 def detalle_producto(request, slug_producto):
-    return render(request, "online/detalle_producto.html")
-
+    try:
+        # monitor-gamerklasjkldajkldalkda
+        producto = Producto.objects.get(slug=slug_producto)
+        imagenes = ImagenProducto.objects.filter(producto=producto)
+        return render(request, "online/detalle_producto.html", {"producto": producto, "imagenes": imagenes})    
+    except ObjectDoesNotExist as error:
+        return render(request, "online/404.html")
+    
 
 def registrarse(request):
     return render(request, "online/registrarse.html")

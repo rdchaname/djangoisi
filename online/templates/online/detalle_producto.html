@@ -10,7 +10,7 @@ Detalle del producto || {{ titulo_principal }}
 <div class="breadcrumb-area">
     <div class="container">
         <div class="breadcrumb-content">
-            <h2>Single Product Type</h2>
+            <h2>{{ producto.titulo }}</h2>
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li class="active">Single Product</li>
@@ -35,24 +35,11 @@ Detalle del producto || {{ titulo_principal }}
                         "swipe": false,
                         "asNavFor": ".sp-img_slider-nav"
                         }'>
+                            {% for imagen in imagenes %}
                             <div class="single-slide red zoom">
-                                <img src="assets/images/product/1-1.jpg" alt="Kenne's Product Image">
+                                <img src="{{ imagen.imagen.url }}" alt="Kenne's Product Image">
                             </div>
-                            <div class="single-slide orange zoom">
-                                <img src="assets/images/product/1-2.jpg" alt="Kenne's Product Image">
-                            </div>
-                            <div class="single-slide brown zoom">
-                                <img src="assets/images/product/2-1.jpg" alt="Kenne's Product Image">
-                            </div>
-                            <div class="single-slide umber zoom">
-                                <img src="assets/images/product/2-2.jpg" alt="Kenne's Product Image">
-                            </div>
-                            <div class="single-slide black zoom">
-                                <img src="assets/images/product/3-1.jpg" alt="Kenne's Product Image">
-                            </div>
-                            <div class="single-slide green zoom">
-                                <img src="assets/images/product/3-2.jpg" alt="Kenne's Product Image">
-                            </div>
+                            {% endfor %}
                         </div>
                         <div class="sp-img_slider-nav slick-slider-nav kenne-element-carousel arrow-style-2 arrow-style-3"
                             data-slick-options='{
@@ -68,24 +55,11 @@ Detalle del producto || {{ titulo_principal }}
                                 {"breakpoint":768, "settings": {"slidesToShow": 3}},
                                 {"breakpoint":575, "settings": {"slidesToShow": 2}}
                             ]'>
+                            {% for imagen in imagenes %}
                             <div class="single-slide red">
-                                <img src="assets/images/product/1-1.jpg" alt="Kenne's Product Thumnail">
+                                <img src="{{ imagen.imagen.url }}" alt="Kenne's Product Thumnail">
                             </div>
-                            <div class="single-slide orange">
-                                <img src="assets/images/product/1-2.jpg" alt="Kenne's Product Thumnail">
-                            </div>
-                            <div class="single-slide brown">
-                                <img src="assets/images/product/2-1.jpg" alt="Kenne's Product Thumnail">
-                            </div>
-                            <div class="single-slide umber">
-                                <img src="assets/images/product/2-2.jpg" alt="Kenne's Product Thumnail">
-                            </div>
-                            <div class="single-slide red">
-                                <img src="assets/images/product/3-1.jpg" alt="Kenne's Product Thumnail">
-                            </div>
-                            <div class="single-slide orange">
-                                <img src="assets/images/product/3-2.jpg" alt="Kenne's Product Thumnail">
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>

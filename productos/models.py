@@ -73,6 +73,10 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.titulo
+    
+    def primeras_imagenes(self):
+        print("ss")
+        return self.imagenproducto_set.order_by('orden')[:2]
 
     # sobre escribiendo el método SAVE de DJANGO
     # nuevo/actualizando
