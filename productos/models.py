@@ -58,6 +58,34 @@ class Marca(models.Model):
         verbose_name_plural = 'Marcas'
 
 
+class Medida(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+    activo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.nombre
+
+    class Meta:
+        db_table = 'medida'
+        verbose_name = 'Medida'
+        verbose_name_plural = 'Medidas'
+
+
+class Color(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+    activo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.nombre
+
+    class Meta:
+        db_table = 'color'
+        verbose_name = 'Color'
+        verbose_name_plural = 'Colores'
+
+
 class Producto(models.Model):
     id = models.AutoField(primary_key=True)
     titulo = models.CharField(max_length=200, verbose_name='Título')
@@ -70,6 +98,10 @@ class Producto(models.Model):
     slug = AutoSlugField(populate_from='titulo',
                          always_update=True, unique=True)
     codigo = models.CharField(max_length=10, default="")
+    
+    # indicar al modelo una relación de muchos a muchos
+    medidas = models.ManyToManyField(Medida, through='Presentacion')
+    colores = models.ManyToManyField(Color, through='Presentacion')
 
     def __str__(self):
         return self.titulo
@@ -122,32 +154,7 @@ class ImagenProducto(models.Model):
         verbose_name_plural = 'Imágenes'
 
 
-class Medida(models.Model):
-    id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=100)
-    activo = models.BooleanField(default=True)
 
-    def __str__(self):
-        return self.nombre
-
-    class Meta:
-        db_table = 'medida'
-        verbose_name = 'Medida'
-        verbose_name_plural = 'Medidas'
-
-
-class Color(models.Model):
-    id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=100)
-    activo = models.BooleanField(default=True)
-
-    def __str__(self):
-        return self.nombre
-
-    class Meta:
-        db_table = 'color'
-        verbose_name = 'Color'
-        verbose_name_plural = 'Colores'
 
 
 class Presentacion(models.Model):

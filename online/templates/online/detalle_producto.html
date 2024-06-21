@@ -12,8 +12,8 @@ Detalle del producto || {{ titulo_principal }}
         <div class="breadcrumb-content">
             <h2>{{ producto.titulo }}</h2>
             <ul>
-                <li><a href="index.html">Home</a></li>
-                <li class="active">Single Product</li>
+                <li><a href="{% url 'portada' %}">Inicio</a></li>
+                <li class="active">Detalle producto</li>
             </ul>
         </div>
     </div>
@@ -66,91 +66,43 @@ Detalle del producto || {{ titulo_principal }}
                 <div class="col-lg-8">
                     <div class="sp-content">
                         <div class="sp-heading">
-                            <h5><a href="#">Aliquid rerum ipsam maxime</a></h5>
-                        </div>
-                        <span class="reference">Reference: demo_1</span>
-                        <div class="rating-box">
-                            <ul>
-                                <li><i class="ion-android-star"></i></li>
-                                <li><i class="ion-android-star"></i></li>
-                                <li><i class="ion-android-star"></i></li>
-                                <li class="silver-color"><i class="ion-android-star"></i></li>
-                                <li class="silver-color"><i class="ion-android-star"></i></li>
-                            </ul>
+                            <h5><a href="#">{{ producto.titulo }}</a></h5>
+                            <input type="hidden" name="producto_id" id="producto_id" value="{{ producto.id }}" />
                         </div>
                         <div class="sp-essential_stuff">
                             <ul>
-                                <li>Brands <a href="javascript:void(0)">Buxton</a></li>
-                                <li>Product Code: <a href="javascript:void(0)">Product 16</a></li>
-                                <li>Reward Points: <a href="javascript:void(0)">100</a></li>
-                                <li>Availability: <a href="javascript:void(0)">In Stock</a></li>
-                                <li>EX Tax: <a href="javascript:void(0)"><span>$453.35</span></a></li>
-                                <li>Price in reward points: <a href="javascript:void(0)">400</a></li>
+                                <li>Marca <a href="javascript:void(0)">{{ producto.marca.nombre }}</a></li>
+                                <li>Código de productos <a href="javascript:void(0)">{{ producto.codigo }}</a></li>
+                                <li>Precio: <a href="javascript:void(0)">$ {{ producto.precio }}</a></li>
                             </ul>
                         </div>
                         <div class="product-size_box">
-                            <span>Size</span>
-                            <select class="myniceselect nice-select">
-                                <option value="1">S</option>
-                                <option value="2">M</option>
-                                <option value="3">L</option>
-                                <option value="4">XL</option>
+                            <span>Medidas</span>
+                            <select class="myniceselect nice-select" id="medida_id" name="medida_id">
+                                {% for medida in medidas %}
+                                    <option value="{{ medida.id }}">{{ medida.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="product-size_box">
+                            <span>Colores</span>
+                            <select class="myniceselect nice-select" id="color_id" name="color_id">
+                                {% for color in colores %}
+                                <option value="{{ color.id }}">{{ color.nombre }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="quantity">
-                            <label>Quantity</label>
+                            <label>Cantidad</label>
                             <div class="cart-plus-minus">
-                                <input class="cart-plus-minus-box" value="1" type="text">
+                                <input class="cart-plus-minus-box" value="1" type="text" id="cantidad" name="cantidad">
                                 <div class="dec qtybutton"><i class="fa fa-angle-down"></i></div>
                                 <div class="inc qtybutton"><i class="fa fa-angle-up"></i></div>
                             </div>
                         </div>
                         <div class="qty-btn_area">
                             <ul>
-                                <li><a class="qty-cart_btn" href="cart.html">Add To Cart</a></li>
-                                <li><a class="qty-wishlist_btn" href="wishlist.html" data-toggle="tooltip"
-                                        title="Add To Wishlist"><i class="ion-android-favorite-outline"></i></a>
-                                </li>
-                                <li><a class="qty-compare_btn" href="compare.html" data-toggle="tooltip"
-                                        title="Compare This Product"><i class="ion-ios-shuffle-strong"></i></a></li>
-                            </ul>
-                        </div>
-                        <div class="kenne-tag-line">
-                            <h6>Tags:</h6>
-                            <a href="javascript:void(0)">scarf</a>,
-                            <a href="javascript:void(0)">jacket</a>,
-                            <a href="javascript:void(0)">shirt</a>
-                        </div>
-                        <div class="kenne-social_link">
-                            <ul>
-                                <li class="facebook">
-                                    <a href="https://www.facebook.com" data-toggle="tooltip" target="_blank"
-                                        title="Facebook">
-                                        <i class="fab fa-facebook"></i>
-                                    </a>
-                                </li>
-                                <li class="twitter">
-                                    <a href="https://twitter.com" data-toggle="tooltip" target="_blank" title="Twitter">
-                                        <i class="fab fa-twitter-square"></i>
-                                    </a>
-                                </li>
-                                <li class="youtube">
-                                    <a href="https://www.youtube.com" data-toggle="tooltip" target="_blank"
-                                        title="Youtube">
-                                        <i class="fab fa-youtube"></i>
-                                    </a>
-                                </li>
-                                <li class="google-plus">
-                                    <a href="https://www.plus.google.com/discover" data-toggle="tooltip" target="_blank"
-                                        title="Google Plus">
-                                        <i class="fab fa-google-plus"></i>
-                                    </a>
-                                </li>
-                                <li class="instagram">
-                                    <a href="https://rss.com" data-toggle="tooltip" target="_blank" title="Instagram">
-                                        <i class="fab fa-instagram"></i>
-                                    </a>
-                                </li>
+                                <li><a class="qty-cart_btn" href="javascript:void(0)" onclick="agregarItem()">Agregar al carrito</a></li>
                             </ul>
                         </div>
                     </div>
@@ -160,4 +112,35 @@ Detalle del producto || {{ titulo_principal }}
     </div>
 </div>
 <!-- Kenne's Single Product Area End Here -->
+{% endblock %}
+
+{% block javascript %}
+<script>
+    function agregarItem(){
+        const data = new FormData();
+        data.append("cantidad", document.getElementById("cantidad").value);
+        data.append("producto_id", document.getElementById("producto_id").value);
+        data.append("color_id", document.getElementById("color_id").value);
+        data.append("medida_id", document.getElementById("medida_id").value);
+        data.append("csrfmiddlewaretoken", '{{ csrf_token }}');
+        const url = '{% url 'agregar_item' %}';
+
+        axios.post(url, data)
+        .then(function(response){
+            const mensaje = response.data.mensaje;
+            toastr.success(mensaje);
+            setTimeout(function(){
+                window.location.reload()
+            }, 2000);
+        })
+        .catch(function(error){
+            if(error.response){
+                const mensaje = error.response.data.mensaje;
+                toastr.error(mensaje)
+            }  else{
+                toastr.error("Error al agregar item")
+            }
+        });
+    }
+</script>
 {% endblock %}
