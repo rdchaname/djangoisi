@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-from online.forms import RegistrarseForm, IniciarSesionForm
+from online.forms import RegistrarseForm, IniciarSesionForm, ConfirmarPedidoForm
 from django.contrib.auth.models import User
-from pedidos.models import Cliente
+from pedidos.models import Cliente, Pedido, DetallePedido
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from productos.models import Producto, ImagenProducto, Presentacion
@@ -248,5 +248,103 @@ def quitar_item(request):
             respuesta = {"mensaje": "Error al intentar quitar item"}
             return JsonResponse(respuesta, status=500)
         
+    else:
+        pass
+
+ 
+@login_required(login_url="/iniciar_sesion")
+def confirmar_pedido(request):
+    usuario_logeado = request.user # datos de la tabla auth_user
+    cliente = Cliente.objects.get(usuario=usuario_logeado)
+    return render(request, "online/confirmar_pedido.html", {"usuario_logeado":usuario_logeado, "cliente": cliente})
+
+
+@login_required(login_url="/iniciar_sesion")
+def guardar_pedido(request):
+    if request.method == 'POST':
+        formulario = ConfirmarPedidoForm(request.POST)
+        if formulario.is_valid():
+            # 01 Verificar
+            carrito = request.session.get("carrito_pedido", [])
+            
+            for item in carrito:
+                presentacion_id = item["presentacion_id"]
+                cantidad = item["cantidad"]
+                titulo = item["titulo"]
+                presentacion = Presentacion.objects.get(id=presentacion_id)
+                if presentacion.stock < cantidad:
+                    mensaje = "El producto %s no tiene stock disponible, revisar carrito" % (titulo)
+                    data = {"mensaje": mensaje}
+                    return JsonResponse(data, status=409) # conflicto
+                
+            # 2 actualizar los datos del cliente
+            usuario = request.user
+            cliente = Cliente.objects.get(usuario=usuario)
+            cliente.nombres = formulario.cleaned_data["nombres"]
+            cliente.apellido_paterno = formulario.cleaned_data["apellido_paterno"]
+            cliente.apellido_materno = formulario.cleaned_data["apellido_materno"]
+            cliente.email = formulario.cleaned_data["email"]
+            cliente.dni = formulario.cleaned_data["dni"]
+            cliente.celular = formulario.cleaned_data["celular"]
+            cliente.telefono_fijo = formulario.cleaned_data["telefono_fijo"]
+            cliente.direccion = formulario.cleaned_data["direccion"]
+            cliente.fecha_nacimiento = formulario.cleaned_data["fecha_nacimiento"]
+            cliente.save()
+            
+            # 3 actualizar los datos del usuario
+            usuario.first_name = formulario.cleaned_data["nombres"]
+            usuario.last_name = formulario.cleaned_data["apellido_paterno"] + " " + formulario.cleaned_data["apellido_materno"]
+            usuario.email = formulario.cleaned_data["email"]
+            usuario.save()
+            
+            total = 0.00
+            for item in carrito:
+                total = total + float(item["subtotal"])
+                
+            # 4 registrar pedido
+            pedido = Pedido()
+            pedido.total = total
+            pedido.cliente = cliente
+            pedido.numero = "000000001" # ???
+            pedido.observacion = request.POST.get("observacion", "")
+            pedido.save()
+            
+            # 5 registrar detalle del pedido
+            for item in carrito:
+                detalle_pedido = DetallePedido()
+                detalle_pedido.precio_unitario = item["precio"]
+                detalle_pedido.cantidad = item["cantidad"]
+                detalle_pedido.presentacion_id = item["presentacion_id"]
+                detalle_pedido.pedido = pedido
+                detalle_pedido.save()
+            
+            # 6 limpiar variables de session
+            request.session["carrito_pedido"] = []
+            
+            url = reverse("mi_cuenta")
+            data = {
+                "mensaje": "Pedido registrado correctamente",
+                "url": url
+            }
+            return JsonResponse(data)
+        else:
+            data = {}
+            lista_errores = {}
+            print(formulario.errors.items())
+            for campo, errores in formulario.errors.items():
+                print(campo)
+                campo_errores = []
+                for error in errores:
+                    campo_errores.append(error)
+                    
+                lista_errores[campo] = campo_errores
+            
+            data["errores"] = lista_errores
+            data["mensaje"] = "Eror en los datos enviados"
+            
+            print(data)
+            
+            # entidad improcesable 422
+            return JsonResponse(data, status=422)
     else:
         pass

@@ -37,7 +37,7 @@
                                         <a href="my-account.html">Mi cuenta</a>
                                     </li>
                                     <li>
-                                        <a href="checkout.html">Confirmar pedido</a>
+                                        <a href="{% url 'confirmar_pedido' %}">Confirmar pedido</a>
                                     </li>
                                     <li>
                                         <a href="{% url 'cerrar_sesion' %}">Salir</a>
@@ -433,7 +433,7 @@
                 <a href="{% url 'carrito' %}" class="kenne-btn kenne-btn_fullwidth">Ir al carrito</a>
             </div>
             <div class="minicart-btn_area">
-                <a href="checkout.html" class="kenne-btn kenne-btn_fullwidth">Confirmar pedido</a>
+                <a href="{% url 'confirmar_pedido' %}" class="kenne-btn kenne-btn_fullwidth">Confirmar pedido</a>
             </div>
         </div>
     </div>
