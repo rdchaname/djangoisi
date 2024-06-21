@@ -30,7 +30,7 @@
                                     <a href="{% url 'portada' %}">Inicio</a>
                                 </li>
                                 <li>
-                                    <a href="/carrito">Carrito</a>
+                                    <a href="{% url 'carrito' %}">Carrito</a>
                                 </li>
                                 {% if user.is_authenticated %}
                                     <li>
@@ -415,7 +415,7 @@
                             <a class="product-item_remove" href="javascript:void(0)"><i
                                 class="ion-android-close"></i></a>
                             <div class="product-item_img">
-                                <img src="assets/images/product/3-1.jpg" alt="Kenne's Product Image">
+                                <img src="{{ item.imagen }}" alt="Kenne's Product Image">
                             </div>
                             <div class="product-item_content">
                                 <a class="product-item_title" href="shop-left-sidebar.html">{{ item.titulo }} </a>
@@ -430,7 +430,7 @@
                 <span class="ammount">$ {{ total_carrito }}</span>
             </div>
             <div class="minicart-btn_area">
-                <a href="cart.html" class="kenne-btn kenne-btn_fullwidth">Ir al carrito</a>
+                <a href="{% url 'carrito' %}" class="kenne-btn kenne-btn_fullwidth">Ir al carrito</a>
             </div>
             <div class="minicart-btn_area">
                 <a href="checkout.html" class="kenne-btn kenne-btn_fullwidth">Confirmar pedido</a>

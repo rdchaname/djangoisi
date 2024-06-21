@@ -1,0 +1,113 @@
+{% extends 'online/layouts/base.html' %}
+
+{% block titulo %}
+Carrito del pedido || {{ titulo_principal }}
+{% endblock %}
+
+{% block contenido%}
+<!-- Begin Kenne's Breadcrumb Area -->
+<div class="breadcrumb-area">
+    <div class="container">
+        <div class="breadcrumb-content">
+            <h2>Carrito de productos</h2>
+            <ul>
+                <li><a href="{% url 'portada' %}">Inicio</a></li>
+                <li class="active">Carrito</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Kenne's Breadcrumb Area End Here -->
+<!-- Begin Uren's Cart Area -->
+<div class="kenne-cart-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <form action="javascript:void(0)">
+                    <div class="table-content table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="kenne-product-remove">Quitar</th>
+                                    <th class="kenne-product-thumbnail">Imagen</th>
+                                    <th class="cart-product-name">Producto</th>
+                                    <th class="kenne-product-price">Precio unitario</th>
+                                    <th class="kenne-product-quantity">Cantidad</th>
+                                    <th class="kenne-product-subtotal">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in carrito_pedido %}
+                                <tr>
+                                    <td class="kenne-product-remove"><a href="javascript:void(0)" onclick="quitarItem({{ forloop.counter0 }})"><i class="fa fa-trash"
+                                        title="Quitar item"></i></a></td>
+                                    <td class="kenne-product-thumbnail"><a href="javascript:void(0)"><img width="120px" src="{{ item.imagen }}" alt="Uren's Cart Thumbnail"></a></td>
+                                    <td class="kenne-product-name"><a href="javascript:void(0)">{{ item.titulo }}</a></td>
+                                    <td class="kenne-product-price"><span class="amount">$ {{ item.precio }}</span></td>
+                                    <td class="quantity">{{ item.cantidad }}</td>
+                                    <td class="product-subtotal"><span class="amount">$ {{ item.subtotal }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5 ml-auto">
+                            <div class="cart-page-total">
+                                <h2>Total</h2>
+                                <ul>
+                                    <li>Total <span>${{ total_carrito }}</span></li>
+                                </ul>
+                                <a href="javascript:void(0)">Proceed to checkout</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Uren's Cart Area End Here -->
+{% endblock %}
+{% block javascript %}
+<script>
+    function quitarItem(indice){
+
+        Swal.fire({
+            title: '¿Está seguro de quitar el item?',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Si, estoy seguro',
+            icon: 'warning'
+        }).then(function(respuestaUsuario){
+            if(respuestaUsuario.isConfirmed){
+                const data = new FormData();
+                data.append("indice", indice);
+                data.append("csrfmiddlewaretoken", '{{ csrf_token }}');
+                const url = '{% url 'quitar_item' %}';
+        
+                axios.post(url, data)
+                    .then(function(response) {
+                        const mensaje = response.data.mensaje;
+                        toastr.success(mensaje);
+                        setTimeout(function(){
+                            window.location.reload()
+                        }, 2000);
+                    })
+                    .catch(function(error){
+                        if(error.response){
+                            const mensaje = error.response.data.mensaje;
+                            toastr.error(mensaje)
+                        }  else{
+                            toastr.error("Error al quitar item")
+                        }
+                    });
+            }
+        })
+    }
+</script>
+{% endblock %}

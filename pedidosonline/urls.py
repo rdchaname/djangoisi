@@ -20,7 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from online.views import portada, detalle_producto, registrarse, \
             iniciar_sesion, registro, ingresar, cerrar_sesion, \
-            mi_cuenta, agregar_item
+            mi_cuenta, agregar_item, carrito, quitar_item
 
 admin.site.site_header = 'Sistema de Pedidos en línea'
 admin.site.site_title = 'Sistema de Pedidos en línea'
@@ -38,6 +38,8 @@ urlpatterns = [
     path('cerrar_sesion', cerrar_sesion, name='cerrar_sesion'),
     path('mi_cuenta', mi_cuenta, name='mi_cuenta'),
     path('agregar_item', agregar_item, name='agregar_item'),
+    path('quitar_item', quitar_item, name='quitar_item'),
+    path('carrito', carrito, name='carrito'),
 ]
 
 if settings.DEBUG is True:
